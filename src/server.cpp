@@ -19,6 +19,34 @@ struct sockaddr_in addr = {};
 
 static void dosomething(int fd);
 
+static int32_t one_request(int fd){
+    char rbuf[4+k_max_msg];
+    errno=0;
+    int32_t err = read_full(fd, rbuf,4);
+    if(err){
+        msg(errno==0? "EOF" : "read error");
+        return err;
+    }
+    uint32_t len =0;
+    memcpy(&len, rbuf,4);
+    if(len>k_max_msg){
+        msg("message too long");
+        return -1;
+    }
+    err = read_full(fd, &rbuf[4], len);
+    if(err){
+        msg("read error");
+        return err;
+    }
+    printf("client says: %.*s\n", len, &rbuf[4]);
+    const char reply[] = "Hello from Server";
+    char wbuf[4+sizeof(reply)];
+    len = (uint32_t)strlen(reply);
+    memcpy(wbuf, &len, 4);
+    memcpy(&wbuf[4], reply, len);
+    return write_all(fd, wbuf, 4+len);
+}   
+
 int main(){
     /*creating socket*/
     int fd = socket(AF_INET,SOCK_STREAM,0);
@@ -53,7 +81,12 @@ int main(){
             continue;
         }
 
-        dosomething(client_fd);
+        while(true){
+            int32_t err = one_request(client_fd);
+            if(err < 0){
+                break;
+            }
+        }
         close(client_fd);
     }
 }
@@ -67,5 +100,5 @@ static void dosomething(int fd){
     }
     printf("Received: %s\n", read_buffer);
     char write_buffer[1024] = "Hello from server!";
-    write(fd, write_buffer, sizeof(write_buffer));
+    write_all(fd, write_buffer, strlen(write_buffer));
 }
