@@ -1,40 +1,34 @@
 # Redstone
 
-A fast, lightweight in-memory key-value store built from scratch in C.
+A Redis-inspired in-memory key-value store built from scratch in C — a learning project.
 
 ## What is Redstone?
 
-Redstone is a Redis-inspired in-memory key-value store implemented from scratch in C. It covers the core internals of how a production-grade in-memory database works -including the RESP protocol, a non-blocking event loop via epoll, and fundamental data structures.
+Redstone is built to understand how Redis works under the hood: TCP networking, the RESP protocol, command dispatch, and an in-memory hashmap — all implemented from scratch in C.
 
 Built to go beyond theoretical knowledge — if you can build it, you understand it.
 
-## Features
-
-- TCP server with non-blocking I/O
-- RESP protocol implementation
-- Core commands — `GET`, `SET`, `DEL`, `EXPIRE`
-- Event loop with `epoll`
-- In-memory hashmap storage
-
 ## Why?
 
-Most developers use Redis without understanding how it works under the hood. Redstone is an attempt to understand exactly that - how a high performance, networked, in-memory data store is built at a low level.
+Most developers use Redis without understanding how it works. Redstone is an attempt to fix that by building it from the ground up at a low level.
 
 ## Getting Started
 
 ### Prerequisites
 
-- GCC or Clang
-- Linux (epoll is Linux-specific)
+- GCC
+- Linux
 - Make
 
 ### Build
 
 ```bash
-git clone https://github.com/yourusername/redstone.git
-cd redstone
 make
 ```
+
+Produces two binaries:
+- `./redstone` — the server
+- `./redstone-client` — a minimal test client
 
 ### Run
 
@@ -42,11 +36,9 @@ make
 ./redstone
 ```
 
-By default, Redstone listens on port `6379`.
+Redstone listens on port `6379`.
 
 ### Connect
-
-You can connect using the standard Redis CLI:
 
 ```bash
 redis-cli ping
@@ -59,36 +51,42 @@ redis-cli get foo
 ```
 redstone/
 ├── src/
-│   ├── main.c          # Entry point
-│   ├── server.c        # TCP server and event loop
-│   ├── protocol.c      # RESP protocol parsing
-│   ├── commands.c      # Command handlers
-│   ├── hashmap.c       # Core data structure
-│   └── util.c          # Helpers
+│   ├── server.c        # TCP accept loop, per-client request handling
+│   ├── protocol.c      # RESP protocol parser and serializer
+│   ├── commands.c      # Command dispatch and handlers (PING, SET, GET, ...)
+│   ├── store.c         # In-memory key-value store (hashmap)
+│   └── client.c        # Test client (development only)
 ├── include/
-│   └── *.h
+│   ├── methods.h       # Shared socket helpers (read_full, write_all, ...)
+│   ├── protocol.h      # RESP types and function declarations
+│   ├── commands.h      # Command handler declarations
+│   └── store.h         # Store API declarations
 ├── Makefile
 └── README.md
 ```
 
-## Roadmap
+## Milestones
 
-- [] TCP server with non-blocking I/O
-- [] RESP protocol
-- [] GET, SET, DEL, EXPIRE
+### Milestone 1 — redis-cli compatible PING / SET / GET
+- [ ] TCP server skeleton on port 6379
+- [ ] Module structure (protocol, commands, store)
+- [ ] RESP protocol parser and serializer
+- [ ] Command dispatch (PING, SET, GET)
+- [ ] In-memory string key-value store
+
+### Milestone 2 — More commands + TTL
+- [ ] DEL, EXISTS
+- [ ] EXPIRE / TTL (passive expiry on access)
+- [ ] Active expiry background sweep
+
+### Milestone 3 — Non-blocking I/O
+- [ ] Non-blocking sockets
+- [ ] `epoll`-based event loop (multiple concurrent clients)
+
+### Beyond
 - [ ] Persistence (RDB/AOF style)
 - [ ] Pub/Sub
-- [ ] More data structures — lists, sorted sets, sets
-- [ ] TTL with background expiry
-- [ ] Rust rewrite
-
-## What I Learned
-
-- How event loops and `epoll` work for handling concurrent connections
-- How the RESP protocol encodes and decodes commands
-- How to implement a hashmap from scratch in C
-- How in-memory databases manage and expire keys
-- Low level network programming in C
+- [ ] More value types — lists, sorted sets, sets
 
 ## License
 

@@ -1,36 +1,46 @@
-#include<err.h>
+#ifndef METHODS_H
+#define METHODS_H
 
-const size_t k_max_msg = 4096;
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <stddef.h>
+#include <unistd.h>
+#include <errno.h>
 
-static void fail(const char* msg){
-    perror(msg);
+#define k_max_msg 4096
+
+static void fail(const char *m) {
+    perror(m);
     exit(1);
 }
 
-static void msg(const char *msg) {
-    fprintf(stderr, "%s\n", msg);
+static void msg(const char *m) {
+    fprintf(stderr, "%s\n", m);
 }
 
-static int32_t read_full(int fd, void *buf, size_t count){
-    size_t total_read = 0;
-    while(total_read < count){
-        ssize_t bytes_read = read(fd, (char*)buf + total_read, count - total_read);
-        if(bytes_read <= 0){
+static int32_t read_full(int fd, void *buf, size_t count) {
+    size_t total = 0;
+    while (total < count) {
+        ssize_t n = read(fd, (char *)buf + total, count - total);
+        if (n <= 0) {
             return -1;
         }
-        total_read += bytes_read;
+        total += (size_t)n;
     }
     return 0;
 }
 
-static int32_t write_all(int fd, const char* buf, size_t count){
-    size_t total_written=0;
-    while(total_written<count){
-        ssize_t bytes_written = write(fd, buf + total_written, count - total_written);
-        if(bytes_written <= 0){
+static int32_t write_all(int fd, const char *buf, size_t count) {
+    size_t total = 0;
+    while (total < count) {
+        ssize_t n = write(fd, buf + total, count - total);
+        if (n <= 0) {
             return -1;
         }
-        total_written += bytes_written;
+        total += (size_t)n;
     }
     return 0;
 }
+
+#endif
