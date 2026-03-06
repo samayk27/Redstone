@@ -68,11 +68,11 @@ redstone/
 ## Milestones
 
 ### Milestone 1 — redis-cli compatible PING / SET / GET
-- [ ] TCP server skeleton on port 6379
-- [ ] Module structure (protocol, commands, store)
-- [ ] RESP protocol parser and serializer
-- [ ] Command dispatch (PING, SET, GET)
-- [ ] In-memory string key-value store
+- [X] TCP server skeleton on port 6379
+- [X] Module structure (protocol, commands, store)
+- [X] RESP protocol parser and serializer
+- [X] Command dispatch (PING, SET, GET)
+- [X] In-memory string key-value store
 
 ### Milestone 2 — More commands + TTL
 - [ ] DEL, EXISTS
