@@ -5,6 +5,7 @@ public class Node<K, V> {
     protected V value;
     protected Node<K,V> next;
     protected Node<K,V> previous;
+    protected long expiration;
 
     public Node(K key, V value) {
         this.key=key;
