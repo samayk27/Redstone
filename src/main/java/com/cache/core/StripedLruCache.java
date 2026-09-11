@@ -1,8 +1,8 @@
 package com.cache.core;
 
-import org.jetbrains.annotations.NotNull;
-import java.time.Duration;
 import java.util.concurrent.locks.ReentrantLock;
+
+import org.jetbrains.annotations.NotNull;
 
 public class StripedLruCache<K,V> {
     private final int numStripes;

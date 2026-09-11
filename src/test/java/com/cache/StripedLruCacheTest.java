@@ -21,7 +21,7 @@ public class StripedLruCacheTest {
 
     @BeforeEach
     void setUp(){
-        cache=new StripedLruCache<>(4,100);
+        cache=new StripedLruCache<>(4,100,10000);
     }
 
     @Test

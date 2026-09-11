@@ -1,10 +1,7 @@
 package com.cache.core;
 
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
-
-import java.time.Instant;
 
 public class LruCache<K,V> {
     protected int capacity;
